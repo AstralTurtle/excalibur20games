@@ -1,41 +1,63 @@
+import { Color, Engine } from "excalibur";
 
-import {Engine, Color, Actor, CollisionType, Keys} from 'excalibur';
+import Bird from "./bird";
+import PipeController from "./pipe";
 
-import Bird from './bird.ts'
-import PipeController from './pipe.ts';
+let score = 0;
 
+const scoreCallback = () => {
+	score++;
+	console.log(`score: ${score}`);
+};
 
 const game = new Engine({
-    width: 800,
-    height: 600
-})
-
-game.start() 
-
-
-const bird = new Bird({
-    x:1,
-    y:game.drawHeight / 2,
-    width: 20,
-    height:20,
-    radius: 10,
-    color: Color.Yellow,
-
+	width: 800,
+	height: 600,
 });
 
+game.start();
 
+const bird = new Bird({
+	x: 40,
+	y: game.drawHeight / 2,
+	width: 20,
+	height: 20,
+	color: Color.Yellow,
+});
 
-bird.body.collisionType = CollisionType.Fixed;
+function makePipe(): void {
+	console.log("making pipe");
 
+	let offset = Math.random() * 100;
+	let sign = Math.random() > 0.5 ? 1 : -1;
 
+	let size = Math.floor(Math.random() * 50) + 75;
 
+	let pipe = new PipeController(
+		game.drawHeight / 2 + offset * sign,
+		size,
+		game,
+		bird.pos.x,
+		scoreCallback
+	);
+
+	game.add(pipe);
+	game.add(pipe.getTopPipe());
+	game.add(pipe.getBottomPipe());
+}
 
 game.add(bird);
 
+let testPipe = new PipeController(
+	game.drawHeight / 2 + 50,
+	100,
+	game,
+	bird.pos.x,
+	scoreCallback
+);
 
-let testPipe  = new PipeController(game.drawHeight /2, 100, game)
+game.add(testPipe);
+game.add(testPipe.getTopPipe());
+game.add(testPipe.getBottomPipe());
 
-
-game.add(testPipe)
-game.add(testPipe.getTopPipe())
-game.add(testPipe.getBottomPipe())
+setInterval(makePipe, 4000);

@@ -1,29 +1,49 @@
-import { Actor, clamp, Keys} from 'excalibur';
+import {
+	Actor,
+	clamp,
+	Collider,
+	CollisionContact,
+	CollisionType,
+	Engine,
+	Input,
+	Keys,
+	Side,
+} from "excalibur";
 
-export default class Bird extends Actor{
-    public update(engine, delta){
-        if (engine.input.keyboard.wasPressed(Keys.Space)) this._jump();
-    
-        this.pos.y += 1 / delta
+export default class Bird extends Actor {
+	public update(engine: Engine, delta: number) {
+		if (engine.input.keyboard.wasPressed(Keys.Space)) this._jump();
 
-        console.log(this.pos.y)
+		this.pos.y += 5 / delta;
 
+		if (this.pos.y > 600) {
+			this._kill();
+		}
+	}
 
-        if (this.pos.y > 800){
-            this._kill()
-        
-        }
-      
-    }
+	onInitialize(engine: Engine): void {
+		engine.input.pointers.on("down", (event: Input.PointerEvent) => {
+			this._jump();
+		});
 
-    _kill(){
-        console.log('die')
-    }
+		this.body.collisionType = CollisionType.Fixed;
+	}
 
-    _jump(){
-        this.pos.y -= 20
-        this.pos.y = clamp(this.pos.y, 0, 810)
-    }
+	onCollisionStart(
+		self: Collider,
+		other: Collider,
+		side: Side,
+		contact: CollisionContact
+	): void {
+		this._kill();
+	}
 
+	_kill() {
+		this.kill();
+	}
+
+	_jump() {
+		this.pos.y -= 40;
+		this.pos.y = clamp(this.pos.y, 0, 810);
+	}
 }
-
