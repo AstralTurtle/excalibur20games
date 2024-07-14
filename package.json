@@ -1,0 +1,9 @@
+{
+  "devDependencies": {
+    "excalibur": "^0.29.3",
+    "parcel-bundler": "^1.12.5"
+  },
+  "dependencies": {
+    "typescript": "^5.5.3"
+  }
+}
