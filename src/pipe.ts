@@ -25,6 +25,8 @@ export default class PipeController extends Actor {
 			x: game.drawWidth,
 			y: holePos,
 		});
+
+		console.log(holePos, holePos);
 		this.scored = false;
 		let offset = holeSize / 2;
 
@@ -32,7 +34,10 @@ export default class PipeController extends Actor {
 
 		this.scoreCallback = callback;
 
-		let pipeHeights = [holePos - offset, holePos - offset];
+		let pipeHeights = [
+			holePos - offset,
+			game.drawHeight - holePos - offset,
+		];
 
 		this.topPipe = new Actor({
 			color: Color.Green,

@@ -4,10 +4,14 @@ import {
 	Collider,
 	CollisionContact,
 	CollisionType,
+	EaseTo,
+	EasingFunctions,
 	Engine,
 	Input,
 	Keys,
+	Label,
 	Side,
+	vec,
 } from "excalibur";
 
 export default class Bird extends Actor {
@@ -43,7 +47,11 @@ export default class Bird extends Actor {
 	}
 
 	_jump() {
-		this.pos.y -= 40;
+		this.actions.easeTo(
+			vec(this.pos.x, this.pos.y - 40),
+			100,
+			EasingFunctions.EaseOutQuad
+		);
 		this.pos.y = clamp(this.pos.y, 0, 810);
 	}
 }

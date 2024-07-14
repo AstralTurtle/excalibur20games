@@ -1,13 +1,32 @@
-import { Color, Engine } from "excalibur";
+import {
+	Actor,
+	Color,
+	Engine,
+	Font,
+	PostKillEvent,
+	Random,
+	Text,
+	vec,
+} from "excalibur";
 
 import Bird from "./bird";
 import PipeController from "./pipe";
 
 let score = 0;
 
+const deathText = new Text({
+	text: ``,
+	font: new Font({ size: 60 }),
+});
+
+let scoreText = new Text({
+	text: `Score: ${score}`,
+	font: new Font({ size: 30 }),
+});
+
 const scoreCallback = () => {
 	score++;
-	console.log(`score: ${score}`);
+	scoreText.text = `Score: ${score}`;
 };
 
 const game = new Engine({
@@ -26,15 +45,14 @@ const bird = new Bird({
 });
 
 function makePipe(): void {
-	console.log("making pipe");
+	const rand = new Random();
 
-	let offset = Math.random() * 100;
-	let sign = Math.random() > 0.5 ? 1 : -1;
+	let offset = rand.integer(-150, 150);
 
-	let size = Math.floor(Math.random() * 50) + 75;
+	let size = rand.integer(100, 225);
 
 	let pipe = new PipeController(
-		game.drawHeight / 2 + offset * sign,
+		game.drawHeight / 2 + offset,
 		size,
 		game,
 		bird.pos.x,
@@ -48,8 +66,29 @@ function makePipe(): void {
 
 game.add(bird);
 
+let scoreDisplay = new Actor({
+	pos: vec(60, 20),
+});
+
+let deathDisplay = new Actor({
+	pos: vec(game.drawWidth / 2, game.drawHeight / 2),
+});
+
+scoreDisplay.graphics.use(scoreText);
+game.add(scoreDisplay);
+
+deathDisplay.graphics.use(deathText);
+
+bird.on(`postkill`, (evt: PostKillEvent) => {
+	console.log("killed");
+	(deathText.text = `Thanks for playing!\nReload to play Again!\nScore: ${score}`),
+		game.add(deathDisplay);
+});
+
+setInterval(makePipe, 4000);
+
 let testPipe = new PipeController(
-	game.drawHeight / 2 + 50,
+	game.drawHeight / 2,
 	100,
 	game,
 	bird.pos.x,
@@ -59,5 +98,3 @@ let testPipe = new PipeController(
 game.add(testPipe);
 game.add(testPipe.getTopPipe());
 game.add(testPipe.getBottomPipe());
-
-setInterval(makePipe, 4000);
